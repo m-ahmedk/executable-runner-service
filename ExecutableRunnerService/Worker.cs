@@ -10,10 +10,19 @@ namespace ExecutableRunnerService
         private Process? _BrainCropService_Process;
         private Process? _UI_Process;
 
+        private readonly IConfiguration _configuration;
+
+        public Worker(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string filePath = Path.Combine(desktopPath, "sample.bat");
+
+            string executableFilePath = _configuration.GetValue<string>("ExecutableFilePath");
 
             // Start BrainCrop Service
             _BrainCropService_Process = new Process
@@ -37,7 +46,7 @@ namespace ExecutableRunnerService
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+                    FileName = executableFilePath,
                     Arguments = "www.google.com",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
